@@ -1,0 +1,240 @@
+# Firebase CLI Commands and Usage Guide
+
+This is a comprehensive reference for the Firebase Command Line Interface (CLI). Let me break down the key sections:
+
+## Installation
+
+### Via NPM (Node Package Manager)
+```bash
+npm install -g firebase-tools
+```
+
+### Standalone Binary
+```bash
+curl -sL firebase.tools | bash
+```
+
+**Requirements:** Node.js and npm must be installed first.
+
+---
+
+## Core Command Structure
+
+```bash
+# View all available commands
+firebase --help
+
+# Get help for a specific command
+firebase <command> --help
+
+# Specify a Firebase project
+firebase -P <project_id> <command>
+```
+
+---
+
+## Command Categories
+
+### 1. **Configuration Commands**
+| Command | Purpose |
+|---------|---------|
+| `firebase login` | Authenticate to Firebase account |
+| `firebase logout` | Sign out of CLI |
+| `firebase login:ci` | Generate token for CI/CD environments |
+| `firebase use` | Set active project & manage aliases |
+| `firebase open` | Open browser to project resources |
+| `firebase init` | Setup new Firebase project (creates firebase.json) |
+
+**Note:** Use `firebase login --no-localhost` for SSH/headless environments.
+
+---
+
+### 2. **Project Management**
+| Command | Purpose |
+|---------|---------|
+| `firebase apps:create` | Create new Firebase app |
+| `firebase apps:list` | List registered apps |
+| `firebase apps:sdkconfig` | Print app configuration |
+| `firebase projects:create` | Create new Firebase project |
+| `firebase projects:list` | List all your projects |
+
+---
+
+### 3. **Deployment & Emulation**
+| Command | Purpose |
+|---------|---------|
+| `firebase deploy` | Deploy your Firebase project |
+| `firebase serve` | Local web server with HTTPS Cloud Functions |
+| `firebase emulators:start` | Start local Firebase emulators |
+| `firebase emulators:exec <script>` | Run script with emulators |
+| `firebase setup:emulators:database` | Download database emulator |
+| `firebase setup:emulators:firestore` | Download Firestore emulator |
+
+---
+
+### 4. **Authentication (Auth)**
+| Command | Purpose |
+|---------|---------|
+| `firebase auth:import` | Batch import user accounts |
+| `firebase auth:export` | Batch export user accounts |
+
+---
+
+### 5. **Realtime Database**
+```bash
+firebase database:get <path>           # Fetch data as JSON
+firebase database:set <path> <data>    # Replace data at location
+firebase database:push <path> <data>   # Push new data to list
+firebase database:update <path> <data> # Partial update
+firebase database:remove <path>        # Delete data
+firebase database:profile              # Profile usage & generate report
+```
+
+---
+
+### 6. **Cloud Firestore**
+```bash
+firebase firestore:delete <path>  # Delete documents/collections (recursive)
+firebase firestore:indexes        # List deployed indexes
+```
+
+---
+
+### 7. **Cloud Functions**
+| Command | Purpose |
+|---------|---------|
+| `firebase functions:log` | Read deployed function logs |
+| `firebase functions:config:set` | Set runtime configuration |
+| `firebase functions:config:get` | Retrieve configuration |
+| `firebase functions:config:clone` | Copy config between projects |
+| `firebase functions:shell` | Local emulation with Node.js shell |
+
+---
+
+### 8. **Hosting**
+```bash
+firebase hosting:disable  # Stop serving Firebase Hosting traffic
+```
+
+---
+
+### 9. **Remote Config**
+```bash
+firebase remoteconfig:get                 # Get Remote Config template
+firebase remoteconfig:versions:list       # List template versions
+firebase remoteconfig:rollback            # Rollback to previous version
+firebase deploy --only remoteconfig       # Deploy Remote Config
+```
+
+---
+
+### 10. **Extensions**
+| Command | Purpose |
+|---------|---------|
+| `firebase ext:install` | Install an extension |
+| `firebase ext:list` | List installed extensions |
+| `firebase ext:configure` | Configure existing extension |
+| `firebase ext:update` | Update extension to latest version |
+| `firebase ext:uninstall` | Uninstall extension |
+
+---
+
+## Authentication Methods (Priority Order)
+
+1. **User Token** (via `firebase login:ci`)
+   ```bash
+   firebase --token="<token>" projects:list
+   # OR
+   export FIREBASE_TOKEN="<token>"
+   ```
+
+2. **Local Login** (via `firebase login`)
+   - Caches credentials locally
+
+3. **Service Account**
+   ```bash
+   export GOOGLE_APPLICATION_CREDENTIALS="/path/to/key.json"
+   ```
+
+4. **Application Default Credentials** (gcloud CLI integration)
+
+---
+
+## CI/CD Integration
+
+### Setup for CI Systems
+```bash
+# On development machine
+firebase login:ci
+# → Copy the generated token
+
+# In CI system, store token securely and use:
+export FIREBASE_TOKEN="<your_token>"
+firebase deploy
+```
+
+### Revoke Token
+```bash
+firebase logout --token <token>
+```
+
+---
+
+## Advanced Usage
+
+### Using Behind a Proxy
+```bash
+export HTTPS_PROXY="http://127.0.0.1:12345"
+export HTTP_PROXY="http://127.0.0.1:12345"
+firebase deploy
+```
+
+---
+
+### Using as a Node Module
+
+```javascript
+const client = require("firebase-tools");
+
+// List Android apps in project "foo"
+client.apps
+  .list("ANDROID", { project: "foo" })
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
+// Equivalent to: firebase --project="foo" apps:list ANDROID
+```
+
+**Note:** Positional arguments come first, options object last. All commands return Promises.
+
+---
+
+## Common Workflows
+
+### Initial Setup
+```bash
+firebase login
+firebase init
+firebase serve
+```
+
+### Development with Emulators
+```bash
+firebase emulators:start
+firebase emulators:exec "npm test"
+```
+
+### Deploy to Production
+```bash
+firebase deploy
+firebase deploy --only functions  # Deploy only Cloud Functions
+firebase deploy --only hosting    # Deploy only Hosting
+```
+
+---
+
+Would you like me to explain any specific Firebase CLI command in more detail or provide examples for a particular use case?
