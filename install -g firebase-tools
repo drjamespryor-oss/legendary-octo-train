@@ -1,0 +1,12 @@
+import * as client from "firebase-tools";
+
+async function listAndroidApps() {
+  try {
+    const data = await client.apps.list("ANDROID", { project: "foo" });
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+listAndroidApps();
