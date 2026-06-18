@@ -1,2 +1,3 @@
 # legendary-octo-train
-3. git revert
+ git revert
+Authentication Methods (Priority Order)
